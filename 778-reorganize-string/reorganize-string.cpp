@@ -8,22 +8,27 @@ public:
         int mx = *max_element(freq.begin(), freq.end());
         if (mx > (sz + 1) / 2) return "";
 
-        vector<pair<int,char>> v;
+        priority_queue<pair<int,char>> pq;
         for (int i = 0; i < 26; i++)
-            if (freq[i] > 0) v.push_back({freq[i], 'a' + i});
-        sort(v.rbegin(), v.rend());
+            if (freq[i] > 0) pq.push({freq[i], 'a' + i});
 
-        string ans(sz, ' ');
-        int pos = 0;
-        for (auto &p : v) {
-            int f = p.first;
-            char c = p.second;
-            while (f--) {
-                if (pos >= sz) pos = 1;   
-                ans[pos] = c;
-                pos += 2;
-            }
+        string ans = "";
+        while (pq.size() >= 2) {
+            auto p1 = pq.top(); pq.pop();
+            auto p2 = pq.top(); pq.pop();
+
+            ans += p1.second;
+            ans += p2.second;
+
+            p1.first--;
+            p2.first--;
+
+            if (p1.first > 0) pq.push(p1);   // <-- the fix, needs your approval
+            if (p2.first > 0) pq.push(p2);   // <-- the fix, needs your approval
         }
+
+        if (pq.size() == 1) ans += pq.top().second;
+
         return ans;
     }
 };
